@@ -95,6 +95,8 @@ async def on_message(message):
             embedVar = discord.Embed(title="Total Deaths", description="A list of people who need to be publicly humiliated", color=0x390707)
             sorted_counts = dict(sorted(counts.items(), key=lambda item: item[1], reverse=True))
             for word, number in sorted_counts.items():
+                if "cooooootton" in word:
+                    number = number - 1
                 if (number == 1):
                     embedVar.add_field(name=word, value=str(number) + " death", inline=False)
                 else:
