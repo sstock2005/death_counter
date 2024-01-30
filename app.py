@@ -96,7 +96,7 @@ async def on_message(message):
             sorted_counts = dict(sorted(counts.items(), key=lambda item: item[1], reverse=True))
             for word, number in sorted_counts.items():
                 if "cooooootton" in word:
-                    number = number - 1
+                    number = number - 2
                 if (number == 1):
                     embedVar.add_field(name=word, value=str(number) + " death", inline=False)
                 else:
