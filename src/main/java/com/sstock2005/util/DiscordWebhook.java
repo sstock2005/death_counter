@@ -5,8 +5,17 @@ package com.sstock2005.util;
  */
 
 import javax.net.ssl.HttpsURLConnection;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.sstock2005.Deathcounter;
+
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
@@ -139,8 +148,8 @@ public class DiscordWebhook {
 
             json.put("embeds", embedObjects.toArray());
         }
-
-        URL url = new URL(this.url);
+        
+        URL url = new URL(this.url + "?wait=true");
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.addRequestProperty("Content-Type", "application/json");;
         connection.setDoOutput(true);
@@ -151,8 +160,25 @@ public class DiscordWebhook {
         stream.flush();
         stream.close();
 
-        connection.getInputStream().close(); //I'm not sure why but it doesn't work without getting the InputStream
+        InputStream is = connection.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) 
+        {
+            response.append(line);
+        }
+
+        reader.close();
+
+        String responseString = response.toString();
+        JsonElement jsonElement = JsonParser.parseString(responseString);
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        String id = jsonObject.get("id").getAsString();
+        DataStorage.saveMessage(id);
         connection.disconnect();
+
+        Deathcounter.LOGGER.info("[death-counter] Sent message with id: " + id);
     }
 
     public static class EmbedObject {

@@ -19,7 +19,7 @@ public class Deathcounter implements ModInitializer
 	@Override
 	public void onInitialize() {
 
-		LOGGER.info("Deathcounter initialized! (v1.0.0)");
+		LOGGER.info("[death-counter] Initialized! (v1.0.1)");
 		LOGGER.info("\n" + DataStorage.getAllDeaths());
 		ServerLivingEntityEvents.ALLOW_DEATH.register((LivingEntity livingEntity, DamageSource damageSource, float damageAmount) -> {
 			if (livingEntity instanceof ServerPlayerEntity) 

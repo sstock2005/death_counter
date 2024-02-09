@@ -3,6 +3,7 @@ package com.sstock2005.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.sstock2005.Constants;
 import com.sstock2005.Deathcounter;
 
 import java.io.File;
@@ -17,8 +18,7 @@ public class DataStorage
 {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final File DATA_DIR = new File("./death-counter");
-    private static final File DATA_FILE = new File(DATA_DIR, "player_deaths.json");
+    
     private static Map<String, Integer> playerDeaths = new HashMap<>();
 
     public static void incrementDeath(String playerName) 
@@ -43,9 +43,9 @@ public class DataStorage
     
     private static void loadData() 
     {
-        if (DATA_FILE.exists()) 
+        if (Constants.DATA_FILE.exists()) 
         {
-            try (FileReader reader = new FileReader(DATA_FILE)) 
+            try (FileReader reader = new FileReader(Constants.DATA_FILE)) 
             {
                 Type type = new TypeToken<Map<String, Integer>>() {}.getType();
                 playerDeaths = GSON.fromJson(reader, type);
@@ -59,12 +59,12 @@ public class DataStorage
 
     private static void saveData() 
     {
-        if (!DATA_DIR.exists()) 
+        if (!Constants.DATA_DIR.exists()) 
         {
-            DATA_DIR.mkdir();
+            Constants.DATA_DIR.mkdir();
         }
 
-        try (FileWriter writer = new FileWriter(DATA_FILE)) 
+        try (FileWriter writer = new FileWriter(Constants.DATA_FILE)) 
         {
             GSON.toJson(playerDeaths, writer);
         } 
@@ -72,5 +72,40 @@ public class DataStorage
         {
             Deathcounter.LOGGER.error("Error saving data", e);
         }
+    }
+
+    public static void saveMessage(String message_id) 
+    {
+        File file = new File(Constants.DATA_DIR, Constants.LAST_MESSAGE_FILE);
+        try (FileWriter writer = new FileWriter(file)) 
+        {
+            writer.write(message_id);
+        } 
+        catch (IOException e) 
+        {
+            Deathcounter.LOGGER.error("Error saving message", e);
+        }
+    }
+    
+    public static String getLastMessage()
+    {
+        File file = new File(Constants.DATA_DIR, Constants.LAST_MESSAGE_FILE);
+        StringBuilder data = new StringBuilder();
+        if (file.exists()) 
+        {
+            try (FileReader reader = new FileReader(file)) 
+            {
+                int i;
+                while ((i = reader.read()) != -1) 
+                {
+                    data.append((char) i);
+                }
+            } 
+            catch (IOException e) 
+            {
+                Deathcounter.LOGGER.error("Error loading last message", e);
+            }
+        }
+        return data.toString();
     }
 }
