@@ -1,4 +1,2 @@
-# Death Counter
-A simple Python script to analyze logs from a Minecraft server.  
-This outputs the deaths to a discord message.  
-- Uses Minecraft 1.20.4 Paper Server  
+# Death Counter | Java
+A fabric mod for 1.20.4 fabric servers to log deaths just like the python script!   
