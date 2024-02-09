@@ -63,6 +63,28 @@ public class DiscordWebhook {
         this.embeds.add(embed);
     }
 
+    public void deleteMessage(String id) throws IOException 
+    {
+        URL url = new URL(this.url + "/messages/" + id);
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setRequestMethod("DELETE");
+        connection.connect();
+    
+        int responseCode = connection.getResponseCode();
+
+        if (responseCode == HttpsURLConnection.HTTP_NO_CONTENT) 
+        {
+            // success
+            Deathcounter.LOGGER.info("[death-counter] Successfully deleted the message with id: " + id);
+        } 
+        else 
+        {
+            Deathcounter.LOGGER.error("[death-counter] Failed to delete the message. If this is your first death, it shouldn't matter HTTP status code: " + responseCode);
+        }
+    
+        connection.disconnect();
+    }
+
     public void execute() throws IOException {
         if (this.content == null && this.embeds.isEmpty()) {
             throw new IllegalArgumentException("Set content or add at least one EmbedObject");

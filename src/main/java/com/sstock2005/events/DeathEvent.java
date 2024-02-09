@@ -1,6 +1,7 @@
 package com.sstock2005.events;
 
 import com.sstock2005.util.*;
+import com.sstock2005.Constants;
 import com.sstock2005.Deathcounter;
 
 import net.minecraft.entity.damage.DamageSource;
@@ -22,9 +23,10 @@ public class DeathEvent
         String playerName = serverplayer.getName().getString();
         DataStorage.incrementDeath(playerName);
 
-        DiscordWebhook webhook = new DiscordWebhook("https://discord.com/api/webhooks/1205318199134920734/_RUA_PZa0hFsxwJz1VvU130PaRbYiABtMKuirwe5Z4aTUx0-z8To5iOYGWsIwCPReKuv");
+        DiscordWebhook webhook = new DiscordWebhook(Constants.DISCORD_WEBHOOK_URL);
         webhook.setAvatarUrl("https://i.imgur.com/0Qnva1k.png");
         webhook.setUsername("Yami (God's Younger Brother)");
+        
         DiscordWebhook.EmbedObject embed = new DiscordWebhook.EmbedObject()
         .setTitle("Total Deaths")
         .setDescription("A list of people who need to be publicly humiliated")
@@ -60,6 +62,7 @@ public class DeathEvent
 
         try 
         {
+            webhook.deleteMessage(DataStorage.getLastMessage());
             webhook.execute();
         } 
         catch (IOException e) 
