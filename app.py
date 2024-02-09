@@ -16,7 +16,6 @@ ftp_user = config.get('FTP', 'user')
 ftp_pass = config.get('FTP', 'pass')
 remote_directory = config.get('FTP', 'remote_directory')
 local_directory = config.get('FTP', 'local_directory')
-
 token = config.get('DISCORD', 'token')
 
 def get_logs(directory):
@@ -58,6 +57,8 @@ def calculate(log_directory, json_file):
                                 if "Villager EntityVillager" in line:
                                     break
                                 username = line.split("]: ")[1].split(" ")[0]
+                                if "<" in username:
+                                    username = username.split("<")[1].split(">")[0]
                                 deaths.append(username)
                                 break
 
@@ -93,10 +94,10 @@ async def on_message(message):
             await message.channel.purge()
             await message.channel.send("**THIS WILL BE UPDATED DAILY**")
             embedVar = discord.Embed(title="Total Deaths", description="A list of people who need to be publicly humiliated", color=0x390707)
+            if 'cooooootton' in counts:
+                counts['cooooootton'] -= 2
             sorted_counts = dict(sorted(counts.items(), key=lambda item: item[1], reverse=True))
             for word, number in sorted_counts.items():
-                if "cooooootton" in word:
-                    number = number - 2
                 if (number == 1):
                     embedVar.add_field(name=word, value=str(number) + " death", inline=False)
                 else:
