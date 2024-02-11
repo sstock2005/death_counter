@@ -1,27 +1,29 @@
-package com.sstock2005.events;
+package com.sstock2005;
 
-import com.sstock2005.util.*;
-import com.sstock2005.Constants;
-import com.sstock2005.Deathcounter;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import com.google.gson.Gson;
+
 import java.awt.Color;
 import java.io.IOException;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.sstock2005.util.*;
 
 import java.lang.reflect.Type;
 import java.util.stream.Collectors;
 import java.util.*;
 
-public class DeathEvent 
+public class DeathListener implements Listener 
 {
-	public static void onDeathEvent(ServerPlayerEntity serverplayer, DamageSource source) 
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event)
     {
-        String playerName = serverplayer.getName().getString();
-        DataStorage.incrementDeath(playerName);
+        String PlayerName = event.getEntity().getName();
+        DataStorage.incrementDeath(PlayerName);
 
         DiscordWebhook webhook = new DiscordWebhook(Constants.DISCORD_WEBHOOK_URL);
         webhook.setAvatarUrl("https://i.imgur.com/0Qnva1k.png");
@@ -67,7 +69,7 @@ public class DeathEvent
         } 
         catch (IOException e) 
         {
-            Deathcounter.LOGGER.error("Error sending webhook", e);
+            DeathCounter.getPlugin(DeathCounter.class).getLogger().severe("Error sending webhook");
         }
     }
 }

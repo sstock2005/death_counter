@@ -1,0 +1,6 @@
+main: ${PACKAGE}.${NAME}
+name: ${NAME}
+version: "${VERSION}"
+api-version: "1.20"
+author: sstock2005
+description: A paper plugin to log deaths just like the python script!

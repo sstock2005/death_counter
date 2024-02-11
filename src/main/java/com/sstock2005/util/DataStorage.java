@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.sstock2005.Constants;
-import com.sstock2005.Deathcounter;
+import com.sstock2005.DeathCounter;
 
 import java.io.File;
 import java.io.FileReader;
@@ -35,7 +35,7 @@ public class DataStorage
         return playerDeaths.getOrDefault(playerName, 0);
     }
 
-    public static String getAllDeaths() 
+    public static String getAllDeaths()
     {
         loadData();
         return GSON.toJson(playerDeaths);
@@ -52,7 +52,7 @@ public class DataStorage
             } 
             catch (IOException e) 
             {
-                Deathcounter.LOGGER.error("Error loading data", e);
+                DeathCounter.getPlugin(DeathCounter.class).getLogger().severe("Error loading data");
             }
         }
     }
@@ -61,7 +61,11 @@ public class DataStorage
     {
         if (!Constants.DATA_DIR.exists()) 
         {
-            Constants.DATA_DIR.mkdir();
+            boolean isCreated = Constants.DATA_DIR.mkdir();
+            if (!isCreated) 
+            {
+                DeathCounter.getPlugin(DeathCounter.class).getLogger().severe("Error creating data directory");
+            }
         }
 
         try (FileWriter writer = new FileWriter(Constants.DATA_FILE)) 
@@ -70,7 +74,7 @@ public class DataStorage
         } 
         catch (IOException e) 
         {
-            Deathcounter.LOGGER.error("Error saving data", e);
+            DeathCounter.getPlugin(DeathCounter.class).getLogger().severe("Error saving data");
         }
     }
 
@@ -83,7 +87,7 @@ public class DataStorage
         } 
         catch (IOException e) 
         {
-            Deathcounter.LOGGER.error("Error saving message", e);
+            DeathCounter.getPlugin(DeathCounter.class).getLogger().severe("Error saving message");
         }
     }
     
@@ -103,7 +107,7 @@ public class DataStorage
             } 
             catch (IOException e) 
             {
-                Deathcounter.LOGGER.error("Error loading last message", e);
+                DeathCounter.getPlugin(DeathCounter.class).getLogger().severe("Error loading last message");
             }
         }
         return data.toString();

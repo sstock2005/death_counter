@@ -9,7 +9,7 @@ import javax.net.ssl.HttpsURLConnection;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sstock2005.Deathcounter;
+import com.sstock2005.DeathCounter;
 
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -75,11 +75,11 @@ public class DiscordWebhook {
         if (responseCode == HttpsURLConnection.HTTP_NO_CONTENT) 
         {
             // success
-            Deathcounter.LOGGER.info("[death-counter] Successfully deleted the message with id: " + id);
+            DeathCounter.getPlugin(DeathCounter.class).getLogger().info("Successfully deleted the message with id: " + id);
         } 
         else 
         {
-            Deathcounter.LOGGER.error("[death-counter] Failed to delete the message. If this is your first death, it shouldn't matter HTTP status code: " + responseCode);
+            DeathCounter.getPlugin(DeathCounter.class).getLogger().severe("Failed to delete the message. If this is your first death, it shouldn't matter HTTP status code: " + responseCode);
         }
     
         connection.disconnect();
@@ -200,7 +200,7 @@ public class DiscordWebhook {
         DataStorage.saveMessage(id);
         connection.disconnect();
 
-        Deathcounter.LOGGER.info("[death-counter] Sent message with id: " + id);
+        DeathCounter.getPlugin(DeathCounter.class).getLogger().info("Sent message with id: " + id);
     }
 
     public static class EmbedObject {
