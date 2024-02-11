@@ -5,6 +5,7 @@ import shutil
 import json
 import discord
 import configparser
+from tqdm import tqdm
 
 deaths = []
 
@@ -17,6 +18,7 @@ ftp_pass = config.get('FTP', 'pass')
 remote_directory = config.get('FTP', 'remote_directory')
 local_directory = config.get('FTP', 'local_directory')
 token = config.get('DISCORD', 'token')
+admin_id = config.getint('DISCORD', 'admin_id')
 
 def get_logs(directory):
     for filename in os.listdir(directory):
@@ -45,7 +47,9 @@ def download(ftp_host, ftp_port, ftp_user, ftp_pass, remote_directory, local_dir
 def calculate(log_directory, json_file):
     with open(json_file, 'r', encoding="utf-8") as f:
         json_data = json.load(f)
-    for filename in os.listdir(log_directory):
+
+    files = os.listdir(log_directory)
+    for filename in tqdm(files, desc="Processing files", unit="file"):
         if filename.endswith('.log'):
             with open(os.path.join(log_directory, filename), 'rb') as log_file:
                 for line in log_file:
@@ -56,11 +60,15 @@ def calculate(log_directory, json_file):
                             if json_data[key].replace("%1$s", "").replace("%2$s", "").replace("%3$s", "").replace("%4$s", "").split("  ", 1)[0] in line:
                                 if "Villager EntityVillager" in line:
                                     break
+                                if "Async Chat Thread" in line:
+                                    break
                                 username = line.split("]: ")[1].split(" ")[0]
                                 if "<" in username:
                                     username = username.split("<")[1].split(">")[0]
+                                if "[DiscordSRV]" in username:
+                                    break
                                 deaths.append(username)
-                                break
+   
 
 download(ftp_host, ftp_port, ftp_user, ftp_pass, remote_directory, local_directory)
 calculate(local_directory, 'en_us.json')
@@ -68,8 +76,10 @@ calculate(local_directory, 'en_us.json')
 for filename in os.listdir(local_directory):
     os.remove(os.path.join(local_directory, filename))
 
+unique_deaths = list(dict.fromkeys(deaths))
+
 counts = {}
-for word in deaths:
+for word in unique_deaths:
     if word in counts:
         counts[word] += 1
     else:
@@ -90,7 +100,7 @@ async def on_message(message):
         return
 
     if message.content.startswith('$getdeaths'):
-        if message.author.id == 877392093155311686:
+        if message.author.id == admin_id:
             await message.channel.purge()
             await message.channel.send("**THIS WILL BE UPDATED DAILY**")
             embedVar = discord.Embed(title="Total Deaths", description="A list of people who need to be publicly humiliated", color=0x390707)
